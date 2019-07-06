@@ -1,0 +1,34 @@
+{
+  "name": "afats-server",
+  "version": "1.0.0",
+  "description": "This will act as a backend server for AFATS (https://github.com/cstayyab/AFATS) Angular app. This is a RESTful API using Express.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node_modules/.bin/nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cstayyab/AFATS-server.git"
+  },
+  "keywords": [
+    "AFATS",
+    "AFATS-server"
+  ],
+  "contributors": [
+    "Muhammad Tayyab Sheikh <cstayyab@gmail.com> (https://cstayyab.github.io)",
+    "shanmukhateja (https://github.com/shanmukhateja)"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cstayyab/AFATS-server/issues"
+  },
+  "homepage": "https://github.com/cstayyab/AFATS-server#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
