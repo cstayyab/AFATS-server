@@ -15,6 +15,7 @@ Following are the entities in this Database:
 |Property|Type|Description|
 |:------:|:--:|:----------|
 |guid|string|Unique ID for every client|
+|browserFingerprint|string|Browser Fingerprint of the client|
 |dEngine|string|Slug for any search engine defined in 'engine' entity|
 |qLinks|array|Array of slugs of QuickLinks defined in 'link' entity|
 |sParam|string|JSON string representing additonal parameters to be added to search page|
