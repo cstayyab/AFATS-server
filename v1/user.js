@@ -151,20 +151,16 @@ exports.deleteQuickLink = async function (hash, slug) {
             return { success: true, hash: calculateHash(u) };
         }
     }
-    return {success: false};
+    return { success: false };
 };
-exports.deleteUser = async function (hash) {
-    guid = getUserByHash(hash);
-    if (guid == null) {
-        return false;
-    } else {
-        var deleted = User.deleteOne({
-            guid: guid
-        });
-        if (!deleted) {
-            return false;
-        } else {
-            return true;
+exports.updateDefaultEngine = async function (hash, slug) {
+    u = await getUserByHash(hash);
+    if (u !== null) {
+        success = await User.findOneAndUpdate({ guid: u.guid }, { dEngine: slug });
+        if (success) {
+            u = await User.findOne({ guid: u.guid });
+            return { success: true, hash: calculateHash(u) };
         }
     }
+    return { success: false };
 };

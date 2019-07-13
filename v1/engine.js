@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-
+mongoose.set('useFindAndModify', false);
 var engineSchema = mongoose.Schema({
     slug: {
         type: String,

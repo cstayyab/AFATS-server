@@ -1,6 +1,6 @@
 let v1 = require('express').Router();
-let user = require('./user');
-let engine = require('./engine');
+let user = require('./v1/user');
+let engine = require('./v1/engine');
 
 v1.get('/', (req, res) => {
     res.status(200).json({
@@ -16,7 +16,20 @@ v1.route('/user')
     });
 v1.route('/user/defaultengine')
     .put((req, res) => {
+        if(req.body.slug !== undefined || req.body.slug == "") {
+            engine.getEngine(req.body.slug).then(data => {
+                if (data == null) {
+                    res.status(404).json({error: "Search Engine Not Found"});
+                } else {
+                    user.updateDefaultEngine(req.body.hash, req.body.slug).then(data => {
+                        res.status(200).json(data);
+                    });
+                }
+            });
 
+        } else {
+            res.status(404).json({error: "Search Engine Not Found"});
+        }
     });
 v1.route(('/user/quicklinks'))
     .get((req, res) => {
