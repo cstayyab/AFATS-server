@@ -21,7 +21,7 @@ Engine = mongoose.model('engines', engineSchema);
 async function getAllEngines() {
     var resultset = await Engine.find();
     var engines = [];
-    console.log("Total Search Engines: " + resultset);
+    //console.log("Total Search Engines: " + resultset);
     resultset.forEach(e => {
         engine = {
             slug: e.slug,

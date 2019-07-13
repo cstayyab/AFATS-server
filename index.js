@@ -6,7 +6,7 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
 mongoose.connect(`mongodb://${process.env.MDB_USER}:${process.env.MDB_PWD}@${process.env.MDB_HOST}:${process.env.MDB_PORT}/${process.env.MDB_NAME}`, { useNewUrlParser: true });
-console.log(`mongodb://${process.env.MDB_USER}:${process.env.MDB_PWD}@${process.env.MDB_HOST}:${process.env.MDB_PORT}/${process.env.MDB_NAME}`);
+//console.log(`mongodb://${process.env.MDB_USER}:${process.env.MDB_PWD}@${process.env.MDB_HOST}:${process.env.MDB_PORT}/${process.env.MDB_NAME}`);
 app.use(bodyParser.urlencoded({
     extended: true
 }));

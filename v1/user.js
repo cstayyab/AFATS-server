@@ -65,7 +65,7 @@ function calculateHash(u) {
 
 async function getUserByHash(hash) {
     var users = await User.find();
-    console.log("Total Users: " + users.length);
+    //console.log("Total Users: " + users.length);
     found = null;
     users.map(u => {
         if (calculateHash(u) == hash) {
