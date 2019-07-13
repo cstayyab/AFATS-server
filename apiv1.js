@@ -32,9 +32,7 @@ v1.route('/user/defaultengine')
         }
     });
 v1.route(('/user/quicklinks'))
-    .get((req, res) => {
-
-    }).post((req, res) => {
+    .post((req, res) => {
 
         user.addQuickLink(req.body.hash, req.body.url, req.body.title, req.body.description).then(data => {
             res.status(200).json(data);
