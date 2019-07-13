@@ -15,7 +15,7 @@ v1.route('/user')
         });
     });
 v1.route('/user/defaultengine')
-    .put((req,res) => {
+    .put((req, res) => {
 
     });
 v1.route(('/user/quicklinks'))
@@ -26,7 +26,7 @@ v1.route(('/user/quicklinks'))
         user.addQuickLink(req.body.hash, req.body.url, req.body.title, req.body.description).then(data => {
             res.status(200).json(data);
         });
-        
+
     }).delete((req, res) => {
         user.deleteQuickLink(req.body.hash, req.body.slug).then(data => {
             res.status(200).json(data);
@@ -36,11 +36,21 @@ v1.route(('/user/quicklinks'))
         user.updateQuickLink(req.body.hash, req.body.slug, req.body.title, req.body.description).then(data => {
             res.status(200).json(data);
         });
-    }) ;
+    });
 v1.route('/searchengine')
     .get((req, res) => {
-        engine.getAllEngines().then((data) => {
-            res.status(200).json(data);
-        });
+        if (req.body.slug === undefined) {
+            engine.getAllEngines().then((data) => {
+                res.status(200).json(data);
+            });
+        } else {
+            engine.getEngine(req.body.slug).then(data => {
+                if(data === null) {
+                    res.status(404).json({error: "Engine Not Found"});
+                } else {
+                    res.status(200).json(data);
+                }
+            });
+        }
     });
 module.exports = v1;
