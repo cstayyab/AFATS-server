@@ -6,11 +6,11 @@ This will act as a backend server for [AFATS](https://github.com/cstayyab/AFATS)
 
 Following are the entities in this Database:
 
-* user
-* engine
-* link
+* users
+* engines
+* link (subdocument of users)
 
-### **User**
+### **users**
 
 |Property|Type|Description|
 |:------:|:--:|:----------|
@@ -19,16 +19,15 @@ Following are the entities in this Database:
 |qLinks|array|Array of slugs of QuickLinks defined in 'link' entity|
 |sParam|string|JSON string representing additonal parameters to be added to search page|
 
-### **Engine**
+### **engines**
 
 |Property|Type|Description|
 |:------:|:--:|:----------|
 |slug|string|A unique identifier for search engines|
 |url|string|The URL of search page|
 |qParam|string|name of the query parameter|
-|usage|number|Number of users using this search engine|
 
-### **Link**
+### **link**
 
 |Property|Type|Description|
 |:------:|:--:|:----------|
@@ -36,18 +35,181 @@ Following are the entities in this Database:
 |url|string|URL of the Page|
 |title|string|Fetched title of the link|
 |description|string|Fetched description of the Page|
-|usage|number|Number of users using this link|
 
-## API Endpoints
+## API Endpoints (v1)
 
 > All inputs and outputs are JSON formatted.
 
-|Path|Method|Description|Inputs|Outputs|
-|:---|:----:|:----------|:-----|:------|
-|`/api/v1/User`|`GET`|Fetch all data of User|`hash`: User hash stored in cookies|Full User entity stored in DB in JSON format. Slugs should bee resolved by Developer using the appropriate endpoints. I hash is invalid then a new user is created and data is returned with additional hash parameter as follows:<br>`{`<br>  `hash`: Hash of the User data<br>  `data`: all data of newly created user as a JS Object<br>`}`<br>The hash should be stored in cookies for future.|
-|`/api/v1/User/DefaultEngine`|`PUT`|Update Default search engine of the user|`hash`: HAsh of User Data<br>`slug`: Slug of New Search Engine|`success`: `true` if search engine slug is correct and set, `false` otherwise.<br>`hash`: New hash of User data. Only returned if `success` parameter is `true`|
-|`/api/v1/User/QuickLinks`|`GET`|Get Resolved QuickLinks of the User|`hash`: Hash of User Data|An array of QuickLinks each containing title, description, url, slug etc.|
-| |`POST`|Add a new QuickLink to current user's list|`hash`: GUID of the current User<br>`url`: URL of the Quick Link|`success`: `true` if successful, `false` otherwise.<br>`hash`: New hash of User data. Only returned if `success` parameter is `true`|
-||`DELETE`|Delete the quick link from the user's list|`hash`: Hash of User Data<br>`slug`: slug of the quick link to remove|`success`: `true` on successful, `false` otherwise.<br>`hash`: New hash of User data. Only returned if `success` parameter is `true`|
-|`/api/v1/QuickLinks`|`GET`|Get all available Quick Links|`None`|Array of all the QuickLinks with their information|
-|`/api/v1/SearchEngine`|`GET`|Get all the available Search engines|`None`|Array of all the available Search Engines|
+### **`/api/v1/user`**
+
+Automatically initialize user and on-demand changing of user data
+
+#### **`GET`**
+
+Fetch all data of the user.
+
+##### Inputs
+
+`hash`: Hash of the user data to identify user. If invalid or not specified a new user is created.
+
+##### Outputs
+
+> **If hash is valid**
+
+`guid`: Internal Unique Identifier
+
+`dEngine`: Slug for identification of Search Engine. (See `/api/v1/searchengine`)
+
+`qLinks`: Array of Quick Links of a user. Single Quick Link looks like this:
+
+```javascript
+    {
+        "slug": "httpscstayyabgithubio",
+        "url": "https://cstayyab.github.io",
+        "title": "CS Tayyab",
+        "description": "Get to Know CS Tayyab"
+    }
+```
+
+`slug` in each quick link is its identifier use to manipulate data in each quick link. (See `/api/v1/user/quicklink`)
+
+> **If hash is Invalid**
+
+`hash`: New Hash for the user
+
+`data`: Data of newly created user. same as described above in valid hash section.
+
+### **`/api/v1/user/defaultengine`**
+
+Manipulate search engine of the user
+
+#### **`PUT`**
+
+Update the search engine slug of the user
+
+##### Inputs
+
+`hash`: Hash of the User
+
+`slug`: Slug of the search engine
+
+##### Outputs
+
+> If `slug` is invalid
+Status code `404` returned with following data:
+
+```javascript
+    {
+        "error": "Search Engine Not Found"
+    }
+```
+
+> If `hash` is invalid
+Status code `200` with following data is returned
+
+```javascript
+    {
+        "success": false
+    }
+```
+
+> If everything is good
+
+Following parameters are returned:
+`hash`: Updated hash of data
+`success`: true
+
+### **`/api/v1/user/quicklinks`**
+
+Manipulate quick links for each user
+
+#### `POST`
+
+Add a new Quick Link for the user
+
+##### Inputs
+
+`hash`: Hash of the User
+
+`url`: URL of the Quick Link
+
+`title`: Title for quick Link
+
+`description`: Description for the Quick Link
+
+##### Outputs
+
+`success`: `true` or `false`. Depends on correctness of hash
+
+`hash`: Updated hash of user data. Only returned is `success` is true
+
+#### `DELETE`
+
+Delete the quick link for current user
+
+##### Inputs
+
+
+`hash`: hash of current user
+
+`slug`: slug of the quick link to delete
+
+##### Outputs
+
+if `hash` or `slug` is invalid then `{ success: false }` otherwise:
+
+```javascript
+    {
+        "hash": "New Hash of User Data",
+        "success": true
+    }
+```
+#### `PUT`
+
+Change title and description of quick link
+
+##### Inputs
+
+`hash`: Hash of the User
+
+`slug`: Slug of the Quick Link
+
+`title`: New title (old if not to be changes)
+
+`description`: New Description (old if not to be changed)
+
+##### Outputs
+
+Returns:
+
+`success`: `true` if no errors, `false` otherwise
+
+`hash`: new hash of data (only if `success` is `true`)
+
+### **`/api/v1/searchengine`**
+
+Get All or single search engine
+
+#### `GET`
+
+Returns the search engine(s)
+
+##### INPUTS
+
+`slug`: (Optional) Slug of search engine
+
+##### OUTPUTS
+
+A single search engine (if slug is specified):
+
+```javascript
+    {
+        "slug": "Slug of the search engine",
+        "url": "URL of Search Page",
+        "qParam": "Query Parameter"
+    }
+```
+
+if `slug` is invalid then an Error `404` is returned with result `{ error: "Engine Not Found" }` is returned
+
+If `slug` is not specified then an array of the search engines containing the elements specified above is returned with status code `200`.
